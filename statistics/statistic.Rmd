@@ -1,0 +1,126 @@
+---
+title: "Statistics in R"
+author: Quanyuan He
+output: html_notebook
+params:
+  doc_title:"statisitc_in_r"
+---
+
+## Section 1: General libraries for statistic analysis:
+### Premodeling stage
+Data visualization: ggplot2, matplotlib, seabean, googleVis
+Data transformation: plyr, data.table
+Missing value imputations: MissForest, MissMDA
+Outline Detection: Outliers, EVIR
+Feature Selection: Features, RRF
+Dimension Reduction: FactoMineR, CCP
+
+### Modeling Stage
+Continuous Regression: car, randomforest
+Ordinal Regression: RMiner, CoreLearn
+Classification: Caret, BigRF
+Clustering: CBA, BankCluster
+Time Series: forest, LTSA
+Survival: survival, Basta
+
+### Post Modeling Stage
+General Model Validation: LSMeans, Comparison
+Regression Validation: RegTest, ACD
+Classfication Validation: BinomTools, DAIM
+Clustering Validation: ClustEval, SigClust
+ROC Analysis: PROC, TimeROC
+
+### Others
+Improve performance: Rcpp, parallel
+Work with web: XML, jasonlit, httr
+Report results: shiny, RMarkdown
+Text Mining: tm, twitterR
+Database:sqldf, RODBC, RMongo
+Miscellaneous: swirl, reshape2, qcc
+
+### References
+
+\newpage
+
+## Test Data Sources in R
+
+```{r}
+data()
+# List the data sets available in package 'MASS'
+data(package = "MASS")
+```
+
+## Distributions and Random
+
+```{r, eval = FALSE}
+## Generate a vector of (10) normal random variables with a mean of 0, (10) uniformed variables with mean of 0 and (10)
+
+x <- c(rnorm(n=10, mean = 2, sd = 2), runif(n=10, min=0, max=10))
+col1 <- runif(12^4, 0, 2)
+col2 <- rnorm(12^4, 0, 2)
+col3 <- rpois(12^4, 3)
+col4 <- rchisq(12^4, 2)
+```
+
+## Generalized Linear Models
+```{r, results="hide"}
+ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
+trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
+group <- gl(2, 10, 20, labels = c("Ctl","Trt"))
+weight <- c(ctl, trt)
+print(weight)
+print(group)
+lm.D9 <- lm(weight ~ group)
+lm.D90 <- lm(weight ~ group - 1) # omitting intercept
+# }
+# NOT RUN {
+anova(lm.D9)
+summary(lm.D90)
+# }
+# NOT RUN {
+opar <- par(mfrow = c(2,2), oma = c(0, 0, 1.1, 0))
+plot(lm.D9, las = 1)      # Residuals, Fitted, ...
+par(opar)
+# }
+```
+
+
+## Power Analysis
+* Our null hypothesis is that the coin is fair and lands heads 50% of the time (
+π = 0.50).
+* Our alternative hypothesis is that the coin is loaded to land heads more then 50% of the time (
+π > 0.50). 
+* Question: How many times should we flip the coin to have a high probability (or power), say 0.80, of correctly rejecting the null ofπ= 0.5 if our coin is indeed loaded to land heads 75% of the time?
+```{r, eval=FALSE}
+# Power analysis (pwr) package  is used for power analysis in R
+library(pwr)
+p.out <- pwr.p.test(h = ES.h(p1 = 0.75, p2 = 0.50),
+           sig.level = 0.05,
+           power = 0.80,
+           alternative = "greater")
+plot(p.out)
+```
+# Maximum likelihood fitting of univariate distribution in MASS package
+```{r}
+library(MASS)
+set.seed(123)
+x <- rgamma(100, shape = 5, rate = 0.1)
+fitdistr(x, "gamma")
+fitdistr(x, dgamma, list(shape = 1, rate = 0.1), lower = 0.001)
+
+set.seed(123)
+x3 <- rweibull(100, shape = 4, scale = 100)
+fitdistr(x3, "weibull")
+
+set.seed(123)
+x4 <- rnegbin(500, mu = 5, theta = 4)
+fitdistr(x4, "Negative Binomial")
+options(op)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
